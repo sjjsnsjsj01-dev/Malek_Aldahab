@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عالم القناص VIP | Institutional Gold Trading Platform</title>
+    
+    <!-- Fonts: Cairo for professional Arabic typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#FFFBF0',
+                            100: '#F9F1D8',
+                            200: '#F0E5B8',
+                            300: '#E6C87C',
+                            400: '#D4AF37',
+                            500: '#C5A028',
+                            600: '#AA8C2C',
+                            700: '#886F23',
+                            800: '#6B571B',
+                            900: '#554515',
+                            neon: '#FFD700',
+                        },
+                        dark: {
+                            900: '#020202',
+                            800: '#050505',
+                            700: '#0A0A0A',
+                            600: '#0F0F0F',
+                            panel: '#111111'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Cairo', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'gold-gradient': 'linear-gradient(135deg, #D4AF37 0%, #F9F1D8 50%, #AA8C2C 100%)',
+                        'gold-text': 'linear-gradient(to bottom, #F9F1D8, #D4AF37, #AA8C2C)',
+                        'dark-gradient': 'linear-gradient(180deg, #020202 0%, #0A0A0A 100%)',
+                        'metallic': 'linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'shimmer': 'shimmer 3s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 20px rgba(212, 175, 55, 0.2)' },
+                            '50%': { boxShadow: '0 0 40px rgba(212, 175, 55, 0.6)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% center' },
+                            '100%': { backgroundPosition: '200% center' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #020202;
+            color: #ffffff;
+            overflow-x: hidden;
+            font-family: 'Cairo', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 3px;
+        }
+
+        /* 3D Canvas Containers */
+        .canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(20,20,20,0.95) 0%, rgba(10,10,10,0.9) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(212, 175, 55, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .glass-card:hover::before {
+            left: 100%;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: rgba(212, 175, 55, 0.7);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(212, 175, 55, 0.15);
+        }
+
+        /* 3D Text Effect */
+        .text-3d-gold {
+            background: linear-gradient(to bottom, #F9F1D8, #D4AF37, #AA8C2C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 4px 15px rgba(212, 175, 55, 0.5));
+        }
+
+        /* 3D Button */
+        .btn-3d {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                0 15px 30px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                inset 0 -1px 0 rgba(0,0,0,0.2),
+                0 0 20px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-3d::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
+        }
+
+        .btn-3d:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.6),
+                inset 0 1px 0 rgba(255,255,255,0.4),
+                0 0 30px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-3d:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        /* Neon Glow */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8), 0 0 20px rgba(212, 175, 55, 0.5), 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+        
+        .neon-border {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+        }
+
+        /* Metallic Effect */
+        .metallic-surface {
+            background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #0a0a0a 100%);
+            position: relative;
+        }
+
+        .metallic-surface::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+            pointer-events: none;
+        }
+
+        /* Trading Dashboard Specifics */
+        .chart-container {
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+        
+        .buy-sell-badge {
+            backdrop-filter: blur(4px);
+            font-weight: 900;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-crown {
+            animation: rotateCrown 3s linear infinite;
+        }
+
+        @keyframes rotateCrown {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        /* Grid Pattern Background */
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Data Stream Animation */
+        .data-stream {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            animation: streamMove 3s linear infinite;
+        }
+
+        @keyframes streamMove {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Image Hover Effect */
+        .image-zoom-container {
+            overflow: hidden;
+        }
+
+        .image-zoom-container img {
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .image-zoom-container:hover img {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-gold-500 selection:text-black">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="loader-content">
+            <div class="loader-crown inline-block mb-6">
+                <i class="fas fa-crown text-7xl text-gold-400"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gold-400 tracking-widest animate-pulse">LOADING INSTITUTIONAL PLATFORM...</h2>
+            <div class="mt-4 w-64 h-1 bg-gray-800 rounded-full overflow-hidden mx-auto">
+                <div class="h-full bg-gold-400 animate-pulse" style="width: 0%" id="loader-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3D Background Layer -->
+    <div id="main-canvas" class="canvas-container"></div>
+
+    <!-- Main Content -->
+    <div class="relative z-10">
+        
+        <!-- Navigation -->
+        <nav class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-gold-500/20">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-crown text-3xl text-gold-400 neon-text"></i>
+                        <span class="text-2xl font-black text-gold-400">القناص VIP</span>
+                    </div>
+                    <div class="hidden md:flex items-center gap-8">
+                        <a href="#features" class="text-gray-300 hover:text-gold-400 transition-colors">المميزات</a>
+                        <a href="#results" class="text-gray-300 hover:text-gold-400 transition-colors">النتائج</a>
+                        <a href="#pricing" class="text-gray-300 hover:text-gold-400 transition-colors">الاشتراك</a>
+                        <a href="https://t.me/topgoldxx" class="btn-3d bg-gradient-to-r from-[#0088cc] to-[#006699] px-6 py-2 rounded-lg font-bold text-sm">
+                            <i class="fab fa-telegram-plane ml-2"></i>انضمام
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 grid-bg">
+            <div class="absolute inset-0 bg-gradient-to-b from-dark-900/70 via-dark-900/30 to-dark-900 z-0"></div>
+            <div class="data-stream" style="top: 20%"></div>
+            <div class="data-stream" style="top: 40%; animation-delay: 1s"></div>
+            <div class="data-stream" style="top: 60%; animation-delay: 2s"></div>
+            
+            <div class="container mx-auto px-4 relative z-10 text-center">
+                
+                <!-- Badge -->
+                <div class="inline-block mb-8 opacity-0 hero-anim">
+                    <span class="px-8 py-3 rounded-full border border-gold-500/40 bg-gold-500/15 text-gold-300 text-sm font-bold tracking-widest uppercase backdrop-blur-md shadow-[0_0_25px_rgba(212,175,55,0.3)]">
+                        <i class="fas fa-crown ml-2 text-gold-500"></i> Institutional Grade Platform
+                    </span>
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-5xl md:text-7xl lg:text-9xl font-black mb-6 leading-tight opacity-0 hero-anim transform translate-y-10">
+                    <span class="block text-white font-light mb-2 tracking-wide">عالم</span>
+                    <span class="text-3d-gold block drop-shadow-2xl tracking-wide">القنّاص VIP</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-gray-300 text-lg md:text-2xl max-w-4xl mx-auto mb-12 font-light leading-relaxed opacity-0 hero-anim transform translate-y-10 border-r-4 border-gold-500 pr-6 text-right md:text-center md:border-none md:pr-0">
+                    منصة تحليل وتداول الذهب تعتمد على <span class="text-gold-400 font-bold neon-text">استراتيجيات احترافية</span> وبيانات السوق العالمية لتحقيق أفضل النتائج في الأسواق المالية.
+                </p>
+
+                <!-- Buttons -->
+                <div class="flex flex-col md:flex-row gap-6 justify-center items-center opacity-0 hero-anim transform translate-y-10">
+                    <a href="https://t.me/topgoldxx?text=السلام%20عليكم%20اريد%20الانضمام%20إلى%20القناة%20الخاصة" target="_blank" class="btn-3d bg-gradient-to-r from-[#0088cc] to-[#006699] text-white px-12 py-6 rounded-xl font-bold text-lg flex items-center gap-4 w-full md:w-auto justify-center shadow-[0_0_40px_rgba(0,136,204,0.5)] hover:brightness-110 group">
+                        <i class="fab fa-telegram-plane text-2xl group-hover:rotate-12 transition-transform"></i>
+                        الانضمام إلى القناة الخاصة
+                    </a>
+                    <a href="https://t.me/topgoldxx" target="_blank" class="btn-3d bg-gradient-to-r from-gold-600 to-gold-900 text-white px-12 py-6 rounded-xl font-bold text-lg flex items-center gap-4 w-full md:w-auto justify-center border-2 border-gold-500 shadow-[0_0_40px_rgba(212,175,55,0.4)] hover:brightness-110">
+                        <i class="fas fa-user-tie text-2xl"></i>
+                        التواصل مع ملك الذهب
+                    </a>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce text-gold-500/60">
+                    <i class="fas fa-chevron-down text-3xl"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Institutional Statistics Section -->
+        <section class="py-16 border-y border-white/5 bg-black/90 backdrop-blur-md relative z-20 metallic-surface">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">إحصائيات <span class="text-gold-400">الأداء المؤسسي</span></h2>
+                    <div class="w-20 h-1 bg-gold-500 mx-auto rounded-full"></div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <!-- Item 1 -->
+                    <div class="p-6 glass-card rounded-2xl group">
+                        <div class="flex justify-center items-baseline gap-2 mb-3">
+                            <span class="text-4xl md:text-6xl font-black text-gold-400 counter-animate" data-target="38">0</span>
+                            <span class="text-4xl md:text-6xl font-black text-gold-400">K</span>
+                        </div>
+                        <div class="text-gray-400 text-sm uppercase tracking-wider font-bold">PIP إجمالي النتائج</div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="p-6 glass-card rounded-2xl group">
+                        <div class="flex justify-center items-baseline gap-2 mb-3">
+                            <span class="text-4xl md:text-6xl font-black text-gold-400 counter-animate" data-target="96">0</span>
+                            <span class="text-4xl md:text-6xl font-black text-gold-400">%</span>
+                        </div>
+                        <div class="text-gray-400 text-sm uppercase tracking-wider font-bold">نسبة نجاح الصفقات</div>
+                    </div>
+                    <!-- Item 3 -->
+                    <div class="p-6 glass-card rounded-2xl group">
+                        <div class="flex justify-center items-baseline gap-2 mb-3">
+                            <span class="text-4xl md:text-6xl font-black text-gold-400 counter-animate" data-target="4200">0</span>
+                            <span class="text-4xl md:text-6xl font-black text-gold-400">+</span>
+                        </div>
+                        <div class="text-gray-400 text-sm uppercase tracking-wider font-bold">صفقة ناجحة</div>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="p-6 glass-card rounded-2xl group">
+                        <div class="flex justify-center items-baseline gap-2 mb-3">
+                            <span class="text-4xl md:text-6xl font-black text-gold-400 counter-animate" data-target="24">0</span>
+                            <span class="text-4xl md:text-6xl font-black text-gold-400">/7</span>
+                        </div>
+                        <div class="text-gray-400 text-sm uppercase tracking-wider font-bold">تحليل السوق</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trading Terminal Section -->
+        <section id="results" class="py-24 bg-dark-800 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-gold-500/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-900/5 rounded-full blur-3xl"></div>
+
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">محطة <span class="text-gold-400 neon-text">التداول الاحترافية</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">نتائج تداول حقيقية من منصة تداول مؤسسية مع شفافية كاملة</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Card 1 -->
+                    <div class="glass-card rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-105">
+                        <div class="h-56 bg-dark-panel relative p-4 border-b border-white/5">
+                            <canvas id="chart1"></canvas>
+                            <div class="absolute top-4 right-4 buy-sell-badge bg-green-500/20 text-green-400 px-4 py-2 rounded-lg border border-green-500/40 text-xs font-bold">BUY</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <span class="text-gold-400 font-bold text-xl block">XAUUSD</span>
+                                    <span class="text-gray-500 text-sm">Gold Spot</span>
+                                </div>
+                                <span class="text-green-400 font-black text-3xl drop-shadow-[0_0_15px_rgba(0,255,0,0.6)]">+210 Pip</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-600 to-green-400 h-full w-full shadow-[0_0_15px_#00ff00]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="glass-card rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-105">
+                        <div class="h-56 bg-dark-panel relative p-4 border-b border-white/5">
+                            <canvas id="chart2"></canvas>
+                            <div class="absolute top-4 right-4 buy-sell-badge bg-red-500/20 text-red-400 px-4 py-2 rounded-lg border border-red-500/40 text-xs font-bold">SELL</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <span class="text-gold-400 font-bold text-xl block">XAUUSD</span>
+                                    <span class="text-gray-500 text-sm">Gold Spot</span>
+                                </div>
+                                <span class="text-green-400 font-black text-3xl drop-shadow-[0_0_15px_rgba(0,255,0,0.6)]">+120 Pip</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-600 to-green-400 h-full w-full shadow-[0_0_15px_#00ff00]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="glass-card rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-105">
+                        <div class="h-56 bg-dark-panel relative p-4 border-b border-white/5">
+                            <canvas id="chart3"></canvas>
+                            <div class="absolute top-4 right-4 buy-sell-badge bg-green-500/20 text-green-400 px-4 py-2 rounded-lg border border-green-500/40 text-xs font-bold">BUY</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <span class="text-gold-400 font-bold text-xl block">XAUUSD</span>
+                                    <span class="text-gray-500 text-sm">Gold Spot</span>
+                                </div>
+                                <span class="text-green-400 font-black text-3xl drop-shadow-[0_0_15px_rgba(0,255,0,0.6)]">+180 Pip</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-600 to-green-400 h-full w-full shadow-[0_0_15px_#00ff00]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="glass-card rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-105">
+                        <div class="h-56 bg-dark-panel relative p-4 border-b border-white/5">
+                            <canvas id="chart4"></canvas>
+                            <div class="absolute top-4 right-4 buy-sell-badge bg-green-500/20 text-green-400 px-4 py-2 rounded-lg border border-green-500/40 text-xs font-bold">BUY</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <span class="text-gold-400 font-bold text-xl block">XAUUSD</span>
+                                    <span class="text-gray-500 text-sm">Gold Spot</span>
+                                </div>
+                                <span class="text-green-400 font-black text-3xl drop-shadow-[0_0_15px_rgba(0,255,0,0.6)]">+95 Pip</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-600 to-green-400 h-full w-full shadow-[0_0_15px_#00ff00]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5 -->
+                    <div class="glass-card rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-105">
+                        <div class="h-56 bg-dark-panel relative p-4 border-b border-white/5">
+                            <canvas id="chart5"></canvas>
+                            <div class="absolute top-4 right-4 buy-sell-badge bg-red-500/20 text-red-400 px-4 py-2 rounded-lg border border-red-500/40 text-xs font-bold">SELL</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <span class="text-gold-400 font-bold text-xl block">XAUUSD</span>
+                                    <span class="text-gray-500 text-sm">Gold Spot</span>
+                                </div>
+                                <span class="text-green-400 font-black text-3xl drop-shadow-[0_0_15px_rgba(0,255,0,0.6)]">+150 Pip</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-600 to-green-400 h-full w-full shadow-[0_0_15px_#00ff00]"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6 -->
+                    <div class="glass-card rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-105">
+                        <div class="h-56 bg-dark-panel relative p-4 border-b border-white/5">
+                            <canvas id="chart6"></canvas>
+                            <div class="absolute top-4 right-4 buy-sell-badge bg-green-500/20 text-green-400 px-4 py-2 rounded-lg border border-green-500/40 text-xs font-bold">BUY</div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <span class="text-gold-400 font-bold text-xl block">XAUUSD</span>
+                                    <span class="text-gray-500 text-sm">Gold Spot</span>
+                                </div>
+                                <span class="text-green-400 font-black text-3xl drop-shadow-[0_0_15px_rgba(0,255,0,0.6)]">+240 Pip</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-gradient-to-r from-green-600 to-green-400 h-full w-full shadow-[0_0_15px_#00ff00]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIP Features Section -->
+        <section id="features" class="py-24 bg-dark-900 relative z-10">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">مميزات <span class="text-gold-400">العضوية المؤسسية</span></h2>
+                    <div class="w-24 h-1 bg-gold-500 mx-auto rounded-full shadow-[0_0_15px_#D4AF37]"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="glass-card p-8 rounded-2xl group hover:border-gold-500/60">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gold-500/25 to-transparent rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg neon-border">
+                            <i class="fas fa-chart-line text-3xl text-gold-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">تحليل السوق 24 ساعة</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">مراقبة مستمرة للأسواق العالمية باستخدام أدوات تحليل مؤسسية لضمان عدم تفويت أي حركة سعرية مهمة.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="glass-card p-8 rounded-2xl group hover:border-gold-500/60">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gold-500/25 to-transparent rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg neon-border">
+                            <i class="fas fa-bullseye text-3xl text-gold-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">إشارات عالية الدقة</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">إشارات دخول وخروج مدروسة بعناية فائقة باستخدام تحليل فني وأساسي متقدم لتحقيق أعلى نسبة نجاح.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="glass-card p-8 rounded-2xl group hover:border-gold-500/60">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gold-500/25 to-transparent rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg neon-border">
+                            <i class="fas fa-shield-alt text-3xl text-gold-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">إدارة احترافية للمخاطر</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">استراتيجيات حماية رأس المال المتقدمة لضمان الاستمرارية في السوق وتقليل الخسائر المحتملة.</p>
+                    </div>
+                    
+                    <!-- Feature 4 -->
+                    <div class="glass-card p-8 rounded-2xl group hover:border-gold-500/60">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gold-500/25 to-transparent rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg neon-border">
+                            <i class="fas fa-newspaper text-3xl text-gold-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">تحليل الأخبار الاقتصادية</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">دراسة احترافية للتأثيرات الإخبارية على سعر الذهب قبل وأثناء الصدور مع توصيات عملية.</p>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="glass-card p-8 rounded-2xl group hover:border-gold-500/60">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gold-500/25 to-transparent rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg neon-border">
+                            <i class="fas fa-brain text-3xl text-gold-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">استراتيجيات تداول مؤسسية</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">دمج التحليل الفني والأساسي مع أدوات الذكاء الاصطناعي لتحسين دقة التنبؤات.</p>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="glass-card p-8 rounded-2xl group hover:border-gold-500/60">
+                        <div class="w-16 h-16 bg-gradient-to-br from-gold-500/25 to-transparent rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg neon-border">
+                            <i class="fas fa-headset text-3xl text-gold-400"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-3">فريق دعم احترافي</h3>
+                        <p class="text-gray-400 leading-relaxed text-sm">دعم فني وإداري متواجد دائمًا لمساعدة الأعضاء وحل أي استفسار بأعلى معايير الخدمة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIP Membership Pricing Section -->
+        <section id="pricing" class="py-24 relative overflow-hidden z-10">
+            <div class="absolute inset-0 bg-gradient-to-b from-dark-800 to-dark-900"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gold-500/5 rounded-full blur-3xl animate-pulse-slow"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="max-w-5xl mx-auto glass-card rounded-3xl p-12 md:p-20 text-center border border-gold-500/40 shadow-[0_0_80px_rgba(212,175,55,0.2)] transform hover:scale-[1.02] transition-transform duration-500 neon-border">
+                    
+                    <div class="inline-block mb-6">
+                        <span class="px-6 py-2 rounded-full bg-gold-500/20 text-gold-400 text-sm font-bold tracking-widest uppercase border border-gold-500/30">
+                            <i class="fas fa-crown ml-2"></i>عضوية VIP الحصرية
+                        </span>
+                    </div>
+
+                    <h2 class="text-3xl md:text-5xl font-bold text-white mb-8 drop-shadow-lg">انضم إلى النخبة الآن</h2>
+                    
+                    <div class="flex flex-col items-center justify-center gap-6 mb-12">
+                        <div class="text-gray-500 text-4xl md:text-5xl font-bold line-through decoration-gold-500 decoration-4">
+                            150$
+                        </div>
+                        <div class="relative">
+                            <span class="text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gold-gradient drop-shadow-[0_0_30px_rgba(212,175,55,0.7)] animate-pulse-glow">100$</span>
+                            <div class="absolute -top-8 -right-16 bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-bold px-4 py-2 rounded-full animate-pulse shadow-lg border-2 border-red-400 rotate-12">
+                                <i class="fas fa-fire ml-1"></i> عرض محدود
+                            </div>
+                        </div>
+                        <span class="text-gold-400 text-lg drop-shadow-md">اشتراك شهري شامل جميع المميزات المؤسسية</span>
+                    </div>
+
+                    <ul class="text-right max-w-2xl mx-auto space-y-4 mb-12 text-gray-300">
+                        <li class="flex items-center gap-4 bg-dark-900/60 p-4 rounded-xl border border-white/5 hover:border-gold-500/30 transition-colors">
+                            <i class="fas fa-check-circle text-green-500 text-xl drop-shadow-[0_0_10px_rgba(0,255,0,0.5)]"></i>
+                            <span class="font-medium">دخول فوري للقناة الخاصة</span>
+                        </li>
+                        <li class="flex items-center gap-4 bg-dark-900/60 p-4 rounded-xl border border-white/5 hover:border-gold-500/30 transition-colors">
+                            <i class="fas fa-check-circle text-green-500 text-xl drop-shadow-[0_0_10px_rgba(0,255,0,0.5)]"></i>
+                            <span class="font-medium">إشارات ذهبية يومية بدقة عالية</span>
+                        </li>
+                        <li class="flex items-center gap-4 bg-dark-900/60 p-4 rounded-xl border border-white/5 hover:border-gold-500/30 transition-colors">
+                            <i class="fas fa-check-circle text-green-500 text-xl drop-shadow-[0_0_10px_rgba(0,255,0,0.5)]"></i>
+                            <span class="font-medium">دعم فني مباشر 24/7</span>
+                        </li>
+                        <li class="flex items-center gap-4 bg-dark-900/60 p-4 rounded-xl border border-white/5 hover:border-gold-500/30 transition-colors">
+                            <i class="fas fa-check-circle text-green-500 text-xl drop-shadow-[0_0_10px_rgba(0,255,0,0.5)]"></i>
+                            <span class="font-medium">تحليلات أسبوعية شاملة</span>
+                        </li>
+                        <li class="flex items-center gap-4 bg-dark-900/60 p-4 rounded-xl border border-white/5 hover:border-gold-500/30 transition-colors">
+                            <i class="fas fa-check-circle text-green-500 text-xl drop-shadow-[0_0_10px_rgba(0,255,0,0.5)]"></i>
+                            <span class="font-medium">إدارة مخاطر متقدمة</span>
+                        </li>
+                    </ul>
+
+                    <a href="https://t.me/topgoldxx?text=السلام%20عليكم%20اريد%20الانضمام%20إلى%20القناة%20الخاصة" class="btn-3d bg-gradient-to-r from-[#0088cc] to-[#006699] inline-block px-16 py-6 rounded-full font-bold text-xl shadow-[0_0_50px_rgba(0,136,204,0.5)] hover:shadow-[0_0_80px_rgba(0,136,204,0.7)] transition-all transform hover:-translate-y-2 w-full md:w-auto">
+                        <i class="fab fa-telegram-plane ml-3 text-2xl"></i>
+                        اشترك الآن واحصل على الوصول الفوري
+                    </a>
+
+                    <p class="mt-6 text-gray-500 text-sm">
+                        <i class="fas fa-lock ml-2"></i>
+                        دفع آمن ومضمون 100%
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trust & Credibility Section -->
+        <section class="py-20 bg-dark-900 border-t border-white/5 z-10 relative">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">الثقة <span class="text-gold-400">والمصداقية</span></h2>
+                    <p class="text-gray-400">لماذا يثق آلاف المتداولين بمنصتنا</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-colors text-center">
+                        <i class="fas fa-file-contract text-5xl text-gold-400 mb-6 drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]"></i>
+                        <h4 class="text-white font-bold mb-3 text-xl">نتائج حقيقية</h4>
+                        <p class="text-gray-500 text-sm">شفافية كاملة في عرض جميع النتائج دون تزييف</p>
+                    </div>
+                    <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-colors text-center">
+                        <i class="fas fa-star text-5xl text-gold-400 mb-6 drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]"></i>
+                        <h4 class="text-white font-bold mb-3 text-xl">تقييمات المتداولين</h4>
+                        <p class="text-gray-500 text-sm">ثقة الآلاف من الأعضاء حول العالم</p>
+                    </div>
+                    <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-colors text-center">
+                        <i class="fas fa-chart-line text-5xl text-gold-400 mb-6 drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]"></i>
+                        <h4 class="text-white font-bold mb-3 text-xl">مخطط حي</h4>
+                        <p class="text-gray-500 text-sm">تحديث لحظي لأسعار الذهب العالمية</p>
+                    </div>
+                    <div class="p-8 glass-card rounded-2xl hover:bg-white/5 transition-colors text-center">
+                        <i class="fas fa-users text-5xl text-gold-400 mb-6 drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]"></i>
+                        <h4 class="text-white font-bold mb-3 text-xl">مجتمع قوي</h4>
+                        <p class="text-gray-500 text-sm">أكثر من 4200 عضو نشط ومتداول</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Realistic Saudi Traders Scene -->
+        <section class="py-24 relative z-10 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-dark-900 z-10"></div>
+            <div class="container mx-auto px-4 relative z-20 text-center">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">ثقة <span class="text-gold-400">المحترفين</span></h2>
+                <p class="text-gray-400 mb-12 max-w-2xl mx-auto">منصة معتمدة من قبل كبار المتداولين في المنطقة</p>
+                
+                <div class="relative rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(212,175,55,0.3)] border-2 border-gold-500/40 max-w-6xl mx-auto group image-zoom-container neon-border">
+                    <img src="https://image.qwenlm.ai/public_source/eefcda4d-a253-4bd5-be04-9a3c35eb1c09/1e4aa479c-1e02-4dda-80cb-0c3e343cd177.png" alt="Saudi Gold Traders Professional Office" class="w-full h-auto object-cover">
+                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-8 text-right">
+                        <div class="flex items-center gap-3 mb-3">
+                            <i class="fas fa-crown text-3xl text-gold-400 neon-text"></i>
+                            <h3 class="text-3xl font-bold text-gold-400 neon-text">TOPGOLDXX</h3>
+                        </div>
+                        <p class="text-gray-300 text-lg">حيث يلتقي الخبرة بالفرص الذهبية في قلب الأسواق المالية</p>
+                    </div>
+                </div>
+
+                <!-- Testimonials -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 max-w-5xl mx-auto">
+                    <div class="glass-card p-6 rounded-2xl text-right">
+                        <div class="flex items-center gap-1 mb-4">
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                        </div>
+                        <p class="text-gray-300 mb-4 text-sm">"أفضل منصة تداول ذهب انضممت إليها. الدقة في الإشارات مذهلة والدعم ممتاز"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gold-500/20 flex items-center justify-center">
+                                <i class="fas fa-user text-gold-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">محمد العتيبي</p>
+                                <p class="text-gray-500 text-xs">متداول محترف</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl text-right">
+                        <div class="flex items-center gap-1 mb-4">
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                        </div>
+                        <p class="text-gray-300 mb-4 text-sm">"نسبة النجاح عالية جدًا والتحليلات دقيقة. أنصح بها بشدة"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gold-500/20 flex items-center justify-center">
+                                <i class="fas fa-user text-gold-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">خالد الدوسري</p>
+                                <p class="text-gray-500 text-xs">مستثمر</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 rounded-2xl text-right">
+                        <div class="flex items-center gap-1 mb-4">
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                            <i class="fas fa-star text-gold-400"></i>
+                        </div>
+                        <p class="text-gray-300 mb-4 text-sm">"الدعم الفني رائع والتحليلات تسبق السوق. منصة احترافية بامتياز"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gold-500/20 flex items-center justify-center">
+                                <i class="fas fa-user text-gold-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-white font-bold text-sm">عبدالله الشهري</p>
+                                <p class="text-gray-500 text-xs">تاجر ذهب</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Global Financial City Scene -->
+        <section class="py-24 relative z-10 overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-b from-dark-900 via-dark-800 to-dark-900"></div>
+            <div class="container mx-auto px-4 relative z-20 text-center">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">حضور <span class="text-gold-400">عالمي</span></h2>
+                <p class="text-gray-400 mb-12 max-w-2xl mx-auto">منصة تداول ذهب رائدة في الشرق الأوسط والعالم</p>
+                
+                <div class="relative rounded-3xl overflow-hidden shadow-[0_0_80px_rgba(212,175,55,0.3)] border-2 border-gold-500/40 max-w-6xl mx-auto group image-zoom-container neon-border">
+                    <img src="https://image.qwenlm.ai/public_source/eefcda4d-a253-4bd5-be04-9a3c35eb1c09/1780b405a-cde1-4b87-b68e-f7a92acd8868.png" alt="Global Financial City Riyadh Saudi Arabia" class="w-full h-auto object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-8 text-center">
+                        <div class="inline-block px-8 py-4 glass-panel rounded-2xl neon-border">
+                            <div class="flex items-center justify-center gap-3 mb-2">
+                                <i class="fas fa-building text-4xl text-gold-400 neon-text"></i>
+                                <h3 class="text-4xl font-black text-gold-400 neon-text">TOPGOLDXX</h3>
+                            </div>
+                            <p class="text-gray-300 text-lg">مقر الشركة - مركز الملك عبدالله المالي، الرياض</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Call To Action -->
+        <section class="py-32 relative z-10">
+            <div class="absolute inset-0 bg-gradient-to-b from-dark-900 via-gold-900/10 to-dark-900"></div>
+            <div class="container mx-auto px-4 relative z-20 text-center">
+                <div class="inline-block mb-8">
+                    <i class="fas fa-crown text-7xl text-gold-400 neon-text animate-float"></i>
+                </div>
+                <h2 class="text-4xl md:text-7xl font-black text-white mb-8 drop-shadow-2xl neon-text">جاهز لتحقيق الأرباح؟</h2>
+                <p class="text-gray-400 text-xl mb-12 max-w-3xl mx-auto">انضم إلى آلاف المتداولين المحترفين وابدأ رحلتك في عالم تداول الذهب الاحترافي</p>
+                <a href="https://t.me/topgoldxx" class="btn-3d bg-gradient-to-r from-gold-600 to-gold-900 text-white px-20 py-8 rounded-full font-bold text-3xl shadow-[0_0_80px_rgba(212,175,55,0.6)] hover:shadow-[0_0_120px_rgba(212,175,55,0.9)] transition-all transform hover:-translate-y-3 inline-flex items-center gap-6 border-4 border-gold-400 neon-border animate-pulse-slow">
+                    <i class="fab fa-telegram-plane text-5xl"></i>
+                    انضم الآن إلى القناة الخاصة
+                </a>
+                <p class="mt-8 text-gray-500 text-sm">
+                    <i class="fas fa-shield-alt ml-2"></i>
+                    ضمان استرداد الأموال خلال 7 أيام إذا لم تكن راضيًا
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-black py-16 border-t border-gray-900 relative z-10">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                    <div class="text-right">
+                        <div class="flex items-center gap-3 mb-6">
+                            <i class="fas fa-crown text-4xl text-gold-400 neon-text"></i>
+                            <span class="text-2xl font-black text-gold-400">القناص VIP</span>
+                        </div>
+                        <p class="text-gray-500 text-sm leading-relaxed">
+                            منصة تداول ذهب احترافية تقدم إشارات وتحليلات دقيقة للمتداولين المحترفين في جميع أنحاء العالم.
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <h4 class="text-white font-bold mb-6 text-lg">روابط سريعة</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#features" class="text-gray-400 hover:text-gold-400 transition-colors">المميزات</a></li>
+                            <li><a href="#results" class="text-gray-400 hover:text-gold-400 transition-colors">النتائج</a></li>
+                            <li><a href="#pricing" class="text-gray-400 hover:text-gold-400 transition-colors">الاشتراك</a></li>
+                            <li><a href="https://t.me/topgoldxx" class="text-gray-400 hover:text-gold-400 transition-colors">تواصل معنا</a></li>
+                        </ul>
+                    </div>
+                    <div class="text-right">
+                        <h4 class="text-white font-bold mb-6 text-lg">الدعم</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-400 hover:text-gold-400 transition-colors">مركز المساعدة</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-gold-400 transition-colors">الأسئلة الشائعة</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-gold-400 transition-colors">شروط الخدمة</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-gold-400 transition-colors">سياسة الخصوصية</a></li>
+                        </ul>
+                    </div>
+                    <div class="text-right">
+                        <h4 class="text-white font-bold mb-6 text-lg">تواصل معنا</h4>
+                        <div class="flex gap-4 mb-6">
+                            <a href="https://t.me/topgoldxx" class="w-12 h-12 rounded-full bg-dark-800 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-dark-900 transition-all duration-300 shadow-lg neon-border">
+                                <i class="fab fa-telegram-plane text-xl"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-full bg-dark-800 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-dark-900 transition-all duration-300 shadow-lg neon-border">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                            <a href="#" class="w-12 h-12 rounded-full bg-dark-800 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-dark-900 transition-all duration-300 shadow-lg neon-border">
+                                <i class="fab fa-instagram text-xl"></i>
+                            </a>
+                        </div>
+                        <p class="text-gray-500 text-sm">@topgoldxx</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-900 pt-8 text-center">
+                    <p class="text-gray-700 text-xs">
+                        &copy; 2024 جميع الحقوق محفوظة لمنصة عالم القناص VIP للتداول. جميع الحقوق محفوظة.
+                    </p>
+                    <p class="text-gray-800 text-xs mt-2">
+                        تحذير المخاطر: تداول الذهب ينطوي على مخاطر عالية وقد لا يكون مناسبًا لجميع المستثمرين.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Loading Screen Animation
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            const progress = document.getElementById('loader-progress');
+            
+            // Simulate loading progress
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    loader.style.opacity = '0';
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        initHeroAnimations();
+                        initCharts();
+                    }, 800);
+                } else {
+                    width += 2;
+                    progress.style.width = width + '%';
+                }
+            }, 30);
+        });
+
+        // GSAP Animations
+        function initHeroAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            gsap.to(".hero-anim", {
+                y: 0,
+                opacity: 1,
+                duration: 1.2,
+                stagger: 0.25,
+                ease: "power4.out"
+            });
+
+            // Animate sections on scroll
+            gsap.utils.toArray('.glass-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: i * 0.1,
+                    ease: "power3.out"
+                });
+            });
+        }
+
+        // Fixed Counter Animation Logic
+        const counters = document.querySelectorAll('.counter-animate');
+        const speed = 100;
+
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 20);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        // Trigger Counter on Scroll
+        let counterSectionVisible = false;
+        const counterSection = document.querySelector('.counter-animate');
+        
+        window.addEventListener('scroll', () => {
+            if(counterSection && !counterSectionVisible) {
+                const sectionPos = counterSection.getBoundingClientRect().top;
+                const screenPos = window.innerHeight / 1.3;
+                if(sectionPos < screenPos) {
+                    animateCounters();
+                    counterSectionVisible = true;
+                }
+            }
+        });
+
+        // Chart.js Configuration
+        function initCharts() {
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                    }
+                },
+                scales: {
+                    x: { 
+                        display: false,
+                        grid: { display: false }
+                    },
+                    y: { 
+                        display: false,
+                        grid: { display: false },
+                        min: 1940,
+                        max: 1990
+                    }
+                },
+                animation: { 
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            };
+
+            // Chart 1 - BUY
+            new Chart(document.getElementById('chart1'), {
+                type: 'line',
+                data: {
+                    labels: ['10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30'],
+                    datasets: [{
+                        label: 'XAUUSD',
+                        data: [1950, 1955, 1952, 1960, 1968, 1975, 1980],
+                        borderColor: '#00ff00',
+                        backgroundColor: 'rgba(0, 255, 0, 0.15)',
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // Chart 2 - SELL
+            new Chart(document.getElementById('chart2'), {
+                type: 'line',
+                data: {
+                    labels: ['11:00', '11:05', '11:10', '11:15', '11:20', '11:25', '11:30'],
+                    datasets: [{
+                        label: 'XAUUSD',
+                        data: [1980, 1975, 1978, 1970, 1965, 1960, 1950],
+                        borderColor: '#ff0000',
+                        backgroundColor: 'rgba(255, 0, 0, 0.15)',
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // Chart 3 - BUY
+            new Chart(document.getElementById('chart3'), {
+                type: 'line',
+                data: {
+                    labels: ['12:00', '12:05', '12:10', '12:15', '12:20', '12:25', '12:30'],
+                    datasets: [{
+                        label: 'XAUUSD',
+                        data: [1945, 1950, 1955, 1962, 1970, 1975, 1982],
+                        borderColor: '#00ff00',
+                        backgroundColor: 'rgba(0, 255, 0, 0.15)',
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // Chart 4 - BUY
+            new Chart(document.getElementById('chart4'), {
+                type: 'line',
+                data: {
+                    labels: ['13:00', '13:05', '13:10', '13:15', '13:20', '13:25', '13:30'],
+                    datasets: [{
+                        label: 'XAUUSD',
+                        data: [1955, 1958, 1960, 1965, 1968, 1972, 1975],
+                        borderColor: '#00ff00',
+                        backgroundColor: 'rgba(0, 255, 0, 0.15)',
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // Chart 5 - SELL
+            new Chart(document.getElementById('chart5'), {
+                type: 'line',
+                data: {
+                    labels: ['14:00', '14:05', '14:10', '14:15', '14:20', '14:25', '14:30'],
+                    datasets: [{
+                        label: 'XAUUSD',
+                        data: [1985, 1980, 1975, 1970, 1965, 1960, 1955],
+                        borderColor: '#ff0000',
+                        backgroundColor: 'rgba(255, 0, 0, 0.15)',
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: commonOptions
+            });
+
+            // Chart 6 - BUY
+            new Chart(document.getElementById('chart6'), {
+                type: 'line',
+                data: {
+                    labels: ['15:00', '15:05', '15:10', '15:15', '15:20', '15:25', '15:30'],
+                    datasets: [{
+                        label: 'XAUUSD',
+                        data: [1950, 1958, 1965, 1972, 1980, 1985, 1992],
+                        borderColor: '#00ff00',
+                        backgroundColor: 'rgba(0, 255, 0, 0.15)',
+                        borderWidth: 2.5,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: commonOptions
+            });
+        }
+
+        // Three.js - Main Scene (Abstract Gold Elements & Particles)
+        const initMainScene = () => {
+            const container = document.getElementById('main-canvas');
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020202, 0.015);
+
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 40;
+            camera.position.y = 5;
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            container.appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const pointLight1 = new THREE.PointLight(0xD4AF37, 3, 100);
+            pointLight1.position.set(15, 10, 15);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0xFFD700, 2, 100);
+            pointLight2.position.set(-15, 10, -15);
+            scene.add(pointLight2);
+
+            // Abstract Crown (Torus + Cones)
+            const crownGroup = new THREE.Group();
+            const goldMat = new THREE.MeshStandardMaterial({ 
+                color: 0xD4AF37, 
+                metalness: 0.95, 
+                roughness: 0.15,
+                envMapIntensity: 1.5
+            });
+            
+            const baseGeo = new THREE.TorusGeometry(10, 1.5, 16, 100);
+            const base = new THREE.Mesh(baseGeo, goldMat);
+            base.rotation.x = Math.PI / 2;
+            crownGroup.add(base);
+
+            const spikeGeo = new THREE.ConeGeometry(2, 8, 4);
+            const positions = [
+                { x: 0, y: 5, z: 10 },
+                { x: 9, y: 4, z: 5 },
+                { x: -9, y: 4, z: 5 },
+                { x: 9, y: 4, z: -5 },
+                { x: -9, y: 4, z: -5 }
+            ];
+
+            positions.forEach(pos => {
+                const spike = new THREE.Mesh(spikeGeo, goldMat);
+                spike.position.set(pos.x, pos.y, pos.z);
+                spike.lookAt(0, 15, 0);
+                crownGroup.add(spike);
+                
+                // Jewel on top
+                const jewelGeo = new THREE.OctahedronGeometry(1.5);
+                const jewelMat = new THREE.MeshStandardMaterial({ 
+                    color: 0xff0000, 
+                    metalness: 0.6, 
+                    roughness: 0.1, 
+                    emissive: 0x550000,
+                    emissiveIntensity: 0.5
+                });
+                const jewel = new THREE.Mesh(jewelGeo, jewelMat);
+                jewel.position.set(pos.x, pos.y + 6, pos.z);
+                crownGroup.add(jewel);
+            });
+
+            crownGroup.position.y = 5;
+            crownGroup.position.z = -10;
+            scene.add(crownGroup);
+
+            // Floating Gold Bars
+            const barsGroup = new THREE.Group();
+            const barGeo = new THREE.BoxGeometry(3, 1.5, 6);
+            
+            for(let i = 0; i < 8; i++) {
+                const bar = new THREE.Mesh(barGeo, goldMat);
+                bar.position.set(
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 30,
+                    (Math.random() - 0.5) * 40 - 20
+                );
+                bar.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+                barsGroup.add(bar);
+            }
+            scene.add(barsGroup);
+
+            // Floating Coins
+            const coinsGroup = new THREE.Group();
+            const coinGeo = new THREE.CylinderGeometry(2, 2, 0.3, 32);
+            
+            for(let i = 0; i < 12; i++) {
+                const coin = new THREE.Mesh(coinGeo, goldMat);
+                coin.position.set(
+                    (Math.random() - 0.5) * 70,
+                    (Math.random() - 0.5) * 35,
+                    (Math.random() - 0.5) * 50 - 25
+                );
+                coin.rotation.z = Math.PI / 2;
+                coin.rotation.y = Math.random() * Math.PI;
+                coinsGroup.add(coin);
+            }
+            scene.add(coinsGroup);
+
+            // Particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 3000;
+            const posArray = new Float32Array(particlesCount * 3);
+            
+            for(let i = 0; i < particlesCount * 3; i++) {
+                posArray[i] = (Math.random() - 0.5) * 100;
+            }
+            
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            const particlesMaterial = new THREE.PointsMaterial({
+                size: 0.2,
+                color: 0xD4AF37,
+                transparent: true,
+                opacity: 0.9,
+                blending: THREE.AdditiveBlending,
+                sizeAttenuation: true
+            });
+            
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            // Animation
+            const clock = new THREE.Clock();
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                const elapsedTime = clock.getElapsedTime();
+
+                // Rotate Crown
+                crownGroup.rotation.y = elapsedTime * 0.15;
+                crownGroup.rotation.x = Math.sin(elapsedTime * 0.3) * 0.1;
+
+                // Float Bars
+                barsGroup.children.forEach((bar, i) => {
+                    bar.rotation.x += 0.005;
+                    bar.rotation.y += 0.005;
+                    bar.position.y += Math.sin(elapsedTime + i) * 0.03;
+                });
+
+                // Rotate Coins
+                coinsGroup.children.forEach((coin, i) => {
+                    coin.rotation.y += 0.02;
+                    coin.position.y += Math.cos(elapsedTime + i) * 0.03;
+                });
+
+                // Move Particles
+                particlesMesh.rotation.y = elapsedTime * 0.03;
+                particlesMesh.rotation.x = elapsedTime * 0.015;
+
+                // Camera subtle movement
+                camera.position.x = Math.sin(elapsedTime * 0.2) * 2;
+                camera.position.y = 5 + Math.cos(elapsedTime * 0.15) * 2;
+                camera.lookAt(0, 5, -10);
+
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+
+        // Initialize Scene
+        initMainScene();
+
+        // Smooth Scroll for Navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.hero-anim');
+            parallaxElements.forEach((el, index) => {
+                const speed = 0.1 + (index * 0.05);
+                el.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
+
