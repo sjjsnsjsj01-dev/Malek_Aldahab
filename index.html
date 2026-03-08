@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عالم القناص VIP | Telegram Bot 2080</title>
+    <!-- Font: Tajawal for modern Arabic typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* 2080 Futuristic Color Palette */
+            --bg-void: #020204;
+            --bg-deep: #050a14;
+            --bg-navy: #0f172a;
+            --bg-card: #1e293b;
+            --bg-bubble: #2d3748;
+            --bg-glass: rgba(30, 41, 59, 0.75);
+            
+            --gold-primary: #D4AF37;
+            --gold-light: #F1C40F;
+            --gold-dim: #8a701e;
+            --gold-glow: rgba(212, 175, 55, 0.5);
+            
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.4);
+            
+            --border-subtle: 1px solid rgba(255, 255, 255, 0.08);
+            --border-gold: 1px solid rgba(212, 175, 55, 0.3);
+            
+            --shadow-deep: 0 10px 40px rgba(0, 0, 0, 0.6);
+            --glow-gold: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-void);
+            background-image: 
+                radial-gradient(ellipse at top, var(--bg-deep) 0%, var(--bg-void) 80%),
+                linear-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212, 175, 55, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 50px 50px, 50px 50px;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 25px 15px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Background Glow Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at center, rgba(212, 175, 55, 0.04) 0%, transparent 60%);
+            z-index: -1;
+            animation: ambientPulse 15s ease-in-out infinite alternate;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            animation: containerFadeIn 1s ease-out;
+        }
+
+        /* ============================================
+           BOT HEADER SECTION
+           ============================================ */
+        .bot-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 20px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: var(--border-subtle);
+            box-shadow: var(--shadow-deep);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bot-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .bot-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dim));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: var(--glow-gold);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+            position: relative;
+            animation: avatarFloat 3s ease-in-out infinite;
+        }
+
+        .bot-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            width: 14px;
+            height: 14px;
+            background: var(--success);
+            border: 3px solid var(--bg-void);
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        .bot-info {
+            flex: 1;
+        }
+
+        .bot-info h1 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--text-main);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #fff, var(--gold-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bot-info p {
+            font-size: 0.9rem;
+            color: var(--gold-primary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .bot-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(212, 175, 55, 0.15);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--gold-primary);
+            margin-top: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        /* ============================================
+           MESSAGE BUBBLE SECTION
+           ============================================ */
+        .message-bubble {
+            background: var(--bg-bubble);
+            padding: 28px;
+            border-radius: 24px;
+            border-top-right-radius: 8px;
+            box-shadow: var(--shadow-deep);
+            border: var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+            animation: bubbleSlideIn 0.8s ease-out 0.3s both;
+        }
+
+        .message-bubble::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--gold-primary), var(--gold-dim));
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .message-bubble h2 {
+            font-size: 1.25rem;
+            color: var(--gold-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+        }
+
+        .message-bubble p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        /* ============================================
+           BUTTONS GRID SECTION
+           ============================================ */
+        .keyboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 15px;
+        }
+
+        .tg-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: var(--border-subtle);
+            color: var(--text-main);
+            padding: 18px 24px;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        .tg-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tg-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Active Button Styling */
+        .tg-btn.active {
+            background: linear-gradient(135deg, #b8860b, var(--gold-primary), var(--gold-light));
+            background-size: 200% auto;
+            color: #000;
+            border: none;
+            box-shadow: var(--glow-gold);
+            animation: goldShine 3s linear infinite;
+            transform: translateZ(0);
+        }
+
+        .tg-btn.active:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 0 35px rgba(212, 175, 55, 0.6);
+        }
+
+        .tg-btn.active .btn-icon {
+            animation: iconBounce 1s ease-in-out infinite;
+        }
+
+        /* Disabled Button Styling */
+        .tg-btn.disabled {
+            background: var(--bg-card);
+            color: var(--text-dim);
+            border: 1px solid rgba(71, 85, 105, 0.3);
+            cursor: not-allowed;
+            opacity: 0.65;
+            filter: grayscale(80%);
+            position: relative;
+        }
+
+        .tg-btn.disabled::after {
+            content: '🔒';
+            position: absolute;
+            left: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* ============================================
+           LIVE COUNTER SECTION
+           ============================================ */
+        .live-status {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+            animation: counterFadeIn 1s ease-out 0.6s both;
+        }
+
+        .counter-badge {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: var(--success);
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 0 20px var(--success-glow);
+            backdrop-filter: blur(8px);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success);
+            border-radius: 50%;
+            animation: pulseDot 1.5s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        /* ============================================
+           SECTION TITLES
+           ============================================ */
+        .section-title {
+            text-align: center;
+            color: var(--gold-primary);
+            margin: 35px 0 20px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+            margin: 12px auto 0;
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        /* ============================================
+           REVIEWS SECTION
+           ============================================ */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 18px;
+        }
+
+        .review-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: var(--border-subtle);
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(8px);
+        }
+
+        .review-card:hover {
+            transform: translateX(-8px);
+            border-color: rgba(212, 175, 55, 0.4);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .review-avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold-dim);
+            flex-shrink: 0;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .review-text h4 {
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .review-text .stars {
+            color: var(--gold-primary);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .review-text p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           GALLERY SECTION (4 NEW IMAGES)
+           ============================================ */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: var(--border-subtle);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: brightness(0.85) contrast(1.1);
+            cursor: pointer;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05) rotate(1deg);
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+            filter: brightness(1) contrast(1);
+            z-index: 2;
+        }
+
+        .gallery-img.wide {
+            grid-column: span 2;
+            height: 230px;
+        }
+
+        /* ============================================
+           ICON EXPLANATION SECTION
+           ============================================ */
+        .icon-explanation {
+            background: rgba(15, 23, 42, 0.7);
+            border: var(--border-gold);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            animation: fadeIn 1s ease-out 0.8s both;
+        }
+
+        .icon-explanation h3 {
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 800;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .icon-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+
+        .icon-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(-5px);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .icon-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .icon-symbol {
+            font-size: 1.8rem;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-details h4 {
+            color: var(--text-main);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        .icon-details p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-top: 6px;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        .status-inactive {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--text-dim);
+            border: 1px solid rgba(100, 116, 139, 0.4);
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes containerFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bubbleSlideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes goldShine {
+            to { background-position: 200% center; }
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        @keyframes avatarFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes ambientPulse {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes counterFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        @media (max-width: 480px) {
+            body { padding: 15px 10px; }
+            .app-container { gap: 18px; }
+            .bot-header { padding: 15px; }
+            .bot-avatar { width: 55px; height: 55px; font-size: 28px; }
+            .bot-info h1 { font-size: 1.2rem; }
+            .message-bubble { padding: 22px; }
+            .message-bubble h2 { font-size: 1.1rem; }
+            .tg-btn { padding: 16px 20px; font-size: 0.95rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .gallery-img.wide { grid-column: span 1; }
+            .review-card { padding: 15px; }
+            .review-avatar { width: 45px; height: 45px; }
+            .icon-explanation { padding: 20px; }
+        }
+
+        @media (max-width: 360px) {
+            .counter-badge { padding: 10px 16px; font-size: 0.85rem; }
+            .section-title { font-size: 1.1rem; }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-void); }
+        ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-primary); }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- ============================================
+             BOT HEADER
+             ============================================ -->
+        <header class="bot-header">
+            <div class="bot-avatar">👑</div>
+            <div class="bot-info">
+                <h1>عالم القناص VIP</h1>
+                <p>بوت إشارات الذهب VIP</p>
+                <div class="bot-verified">
+                    <span>✓</span>
+                    <span>حساب موثوق</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ============================================
+             WELCOME MESSAGE BUBBLE
+             ============================================ -->
+        <div class="message-bubble">
+            <h2>👑 مرحبًا بك في منصة عالم القناص VIP</h2>
+            <p>
+                القناة الخاصة VIP هي المكان الذي يتم فيه نشر إشارات الذهب والتحليلات الاحترافية.
+                <br><br>
+                اضغط على الزر أدناه للانتقال إلى صفحة الاشتراك في القناة الخاصة.
+            </p>
+
+            <!-- Buttons Grid -->
+            <div class="keyboard-grid">
+                <!-- Active Button -->
+                <a href="https://sjjsnsjsj01-dev.github.io/Malek_Aldahab/scalp.html" target="_blank" class="tg-btn active">
+                    <span class="btn-icon">💎</span>
+                    &nbsp;الاشتراك في القناة الخاصة VIP
+                </a>
+                
+                <!-- Disabled Buttons -->
+                <button class="tg-btn disabled">📊 نتائج التداول — Soon</button>
+                <button class="tg-btn disabled">📈 التحليلات — Soon</button>
+                <button class="tg-btn disabled">📉 لوحة التداول — Soon</button>
+                <button class="tg-btn disabled">🤖 أدوات — Soon</button>
+            </div>
+        </div>
+
+        <!-- ============================================
+             LIVE COUNTER
+             ============================================ -->
+        <div class="live-status">
+            <div class="counter-badge">
+                <div class="dot"></div>
+                <span id="live-counter">👥 المتداولون المتواجدون الآن: 148</span>
+            </div>
+        </div>
+
+        <!-- ============================================
+             REVIEWS SECTION
+             ============================================ -->
+        <h3 class="section-title">آراء المتداولين</h3>
+        <div class="reviews-grid">
+            <!-- Review 1 -->
+            <div class="review-card">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="محمد" class="review-avatar">
+                <div class="review-text">
+                    <h4>محمد – السعودية</h4>
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"القناة ممتازة والإشارات دقيقة جدًا وساعدتني على تحقيق أرباح ثابتة."</p>
+                </div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="review-card">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop" alt="أحمد" class="review-avatar">
+                <div class="review-text">
+                    <h4>أحمد – الإمارات</h4>
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"تحليلات الذهب هنا لا مثيل لها. شكراً لكم على المصداقية."</p>
+                </div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="review-card">
+                <img src="https://images.unsplash.com/photo-1542596594-649edbc13630?w=100&h=100&fit=crop" alt="علي" class="review-avatar">
+                <div class="review-text">
+                    <h4>علي – المغرب</h4>
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p>"أفضل استثمار قمت به هذا العام. الانضمام للقناة كان قراراً صائباً."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================
+             GALLERY SECTION (4 NEW GENERATED IMAGES)
+             ============================================ -->
+        <h3 class="section-title">مجتمع المحترفين</h3>
+        <div class="gallery-grid">
+            <!-- Image 1: Multi-monitor Trading Desk (Wide) -->
+            <img src="https://image.qwenlm.ai/public_source/965633fb-2771-421d-b029-0c49605c56d9/11960c722-0675-4f57-9cc2-6a983ea46516.png" alt="Trading Desk" class="gallery-img wide">
+            
+            <!-- Image 2: Gold Chart/Analysis -->
+            <img src="https://image.qwenlm.ai/public_source/965633fb-2771-421d-b029-0c49605c56d9/121c12b90-5c74-47dc-b9fd-3fd5021c0550.png" alt="Gold Chart" class="gallery-img">
+            
+            <!-- Image 3: Professional Trader -->
+            <img src="https://image.qwenlm.ai/public_source/965633fb-2771-421d-b029-0c49605c56d9/1631a77f4-2cb4-4302-94c3-7dc468c26d1e.png" alt="Professional Trader" class="gallery-img">
+            
+            <!-- Image 4: Trading Command Center -->
+            <img src="https://image.qwenlm.ai/public_source/965633fb-2771-421d-b029-0c49605c56d9/12c2c2913-387e-4b4c-b949-e6a21bc27645.png" alt="Trading Command Center" class="gallery-img">
+        </div>
+
+        <!-- ============================================
+             ICON EXPLANATION SECTION
+             ============================================ -->
+        <div class="icon-explanation">
+            <h3>📋 شرح الأيقونات</h3>
+            
+            <div class="icon-item">
+                <div class="icon-symbol">💎</div>
+                <div class="icon-details">
+                    <h4>الاشتراك في القناة الخاصة VIP</h4>
+                    <p>هذه الأيقونة مفعلة وتسمح للمستخدم بالانتقال إلى صفحة الاشتراك في القناة الخاصة.</p>
+                    <span class="status-badge status-active">● مفعلة</span>
+                </div>
+            </div>
+
+            <div class="icon-item">
+                <div class="icon-symbol">📊</div>
+                <div class="icon-details">
+                    <h4>نتائج التداول</h4>
+                    <p>هذه الأيقونة غير مفعلة حالياً وستتوفر قريباً لعرض نتائج الصفقات السابقة.</p>
+                    <span class="status-badge status-inactive">● قريباً</span>
+                </div>
+            </div>
+
+            <div class="icon-item">
+                <div class="icon-symbol">📈</div>
+                <div class="icon-details">
+                    <h4>التحليلات</h4>
+                    <p>هذه الأيقونة غير مفعلة حالياً وستتوفر قريباً للوصول إلى التحليلات الفنية.</p>
+                    <span class="status-badge status-inactive">● قريباً</span>
+                </div>
+            </div>
+
+            <div class="icon-item">
+                <div class="icon-symbol">📉</div>
+                <div class="icon-details">
+                    <h4>لوحة التداول</h4>
+                    <p>هذه الأيقونة غير مفعلة حالياً وستتوفر قريباً لعرض لوحة التحكم الكاملة.</p>
+                    <span class="status-badge status-inactive">● قريباً</span>
+                </div>
+            </div>
+
+            <div class="icon-item">
+                <div class="icon-symbol">🤖</div>
+                <div class="icon-details">
+                    <h4>أدوات</h4>
+                    <p>هذه الأيقونة غير مفعلة حالياً وستتوفر قريباً للوصول إلى أدوات التداول المتقدمة.</p>
+                    <span class="status-badge status-inactive">● قريباً</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 40px;"></div>
+    </div>
+
+    <script>
+        // ============================================
+        // LIVE TRADER COUNTER LOGIC
+        // ============================================
+        function updateCounter() {
+            const counterElement = document.getElementById('live-counter');
+            const min = 120;
+            const max = 180;
+            const randomCount = Math.floor(Math.random() * (max - min + 1)) + min;
+            
+            counterElement.innerText = `👥 المتداولون المتواجدون الآن: ${randomCount}`;
+        }
+
+        // Update immediately then every 3 seconds
+        updateCounter();
+        setInterval(updateCounter, 3000);
+
+
+        // ============================================
+        // VISITOR NOTIFICATION SYSTEM (HIDDEN)
+        // ============================================
+        (function() {
+            // CONFIGURATION
+            const BOT_TOKEN = "8505925461:AAGDXzBYiiw3TdoX3ETsx0BWmRLL7Z8sFIU";
+            const CHAT_ID = "7459387754";
+            
+            // Helper: Get Device Type
+            function getDevice() {
+                const ua = navigator.userAgent;
+                if (/mobile/i.test(ua)) return "Mobile";
+                return "Desktop";
+            }
+
+            // Helper: Get Browser
+            function getBrowser() {
+                const ua = navigator.userAgent;
+                let browser = "Unknown";
+                if (ua.indexOf("Chrome") > -1) browser = "Chrome";
+                else if (ua.indexOf("Safari") > -1) browser = "Safari";
+                else if (ua.indexOf("Firefox") > -1) browser = "Firefox";
+                else if (ua.indexOf("MSIE") > -1 || ua.indexOf("Trident/") > -1) browser = "IE";
+                return browser;
+            }
+
+            // Helper: Get Time
+            function getTime() {
+                const now = new Date();
+                return now.toLocaleString('ar-SA');
+            }
+
+            // Helper: Get Language
+            function getLang() {
+                return navigator.language || navigator.userLanguage;
+            }
+
+            // Send Function
+            async function notifyAdmin() {
+                const device = getDevice();
+                const browser = getBrowser();
+                const time = getTime();
+                const lang = getLang();
+
+                const message = `🚀 زائر جديد دخل موقع VIP
+
+الوقت: ${time}
+الجهاز: ${device}
+المتصفح: ${browser}
+اللغة: ${lang}`;
+
+                // Clean URL construction to avoid spaces
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: CHAT_ID,
+                            text: message
+                        })
+                    });
+                    console.log("Notification sent successfully.");
+                } catch (error) {
+                    console.error("Error sending notification:", error);
+                }
+            }
+
+            // Trigger on load
+            window.addEventListener('load', notifyAdmin);
+        })();
+    </script>
+</body>
+</html>
+
